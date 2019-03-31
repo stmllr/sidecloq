@@ -14,7 +14,7 @@ class TestSchedule < Sidecloq::Test
     end
     let(:nested_schedule_hash) do
       {
-        'test' => {
+        'development' => {
           'test_job' => {
             'class' => 'JobClass',
             'cron' => '0 7 * * *',
@@ -48,9 +48,6 @@ class TestSchedule < Sidecloq::Test
 
       file = Tempfile.new('nested_schedule_test')
 
-      restore_env = Rails.env
-      Rails.env = 'test'
-
       loaded = Sidecloq::Schedule.from_yaml(file.path)
 
       assert_equal('test_job', loaded.job_specs.keys.first)
@@ -58,7 +55,6 @@ class TestSchedule < Sidecloq::Test
       assert_equal({'batch' => 100}, loaded.job_specs.values.first['args'])
 
       file.delete
-      Rails.env = restore_env
     end
 
     it 'can save and load from redis' do

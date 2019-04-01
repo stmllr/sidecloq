@@ -55,7 +55,6 @@ class TestSchedule < Sidecloq::Test
       require 'tempfile'
 
       define_rails!
-      restore_env = ::Rails.env
       ::Rails.env = 'test'
 
       file = Tempfile.new('rail_senv_schedule_test')
@@ -66,7 +65,6 @@ class TestSchedule < Sidecloq::Test
 
       assert_equal('rails_env_test_job', loaded.job_specs.keys.first)
 
-      ::Rails.env = restore_env
       file.delete
     end
 
@@ -74,7 +72,6 @@ class TestSchedule < Sidecloq::Test
       require 'tempfile'
 
       define_rails!
-      restore_env = ::Rails.env
       ::Rails.env = nil
       ENV['RACK_ENV'] = 'staging'
 
@@ -86,7 +83,6 @@ class TestSchedule < Sidecloq::Test
 
       assert_equal('rack_env_test_job', loaded.job_specs.keys.first)
 
-      ::Rails.env = restore_env
       file.delete
     end
 

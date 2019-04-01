@@ -21,8 +21,18 @@ class TestSchedule < Sidecloq::Test
         }
       }
     end
+    let(:rack_env_schedule_hash) do
+      {
+        'staging' => {
+          'rack_env_test_job' => {
+            'class' => 'JobClass'
+          }
+        }
+      }
+    end
     let(:schedule) { Sidecloq::Schedule.from_hash(schedule_hash) }
     let(:rails_env_schedule) { Sidecloq::Schedule.from_hash(rails_env_schedule_hash) }
+    let(:rack_env_schedule) { Sidecloq::Schedule.from_hash(rack_env_schedule_hash) }
     before { Sidekiq.redis(&:flushdb) }
 
     it 'can save and load from a yml file' do
@@ -42,10 +52,9 @@ class TestSchedule < Sidecloq::Test
     end
 
     it 'can load Rails.env based nested yml file' do
-      define_rails!
-
       require 'tempfile'
 
+      define_rails!
       restore_env = ::Rails.env
       ::Rails.env = 'test'
 
@@ -56,6 +65,26 @@ class TestSchedule < Sidecloq::Test
       loaded = Sidecloq::Schedule.from_yaml(file.path)
 
       assert_equal('rails_env_test_job', loaded.job_specs.keys.first)
+
+      ::Rails.env = restore_env
+      file.delete
+    end
+
+    it 'can load RACK_ENV based nested yml file' do
+      require 'tempfile'
+
+      define_rails!
+      restore_env = ::Rails.env
+      ::Rails.env = nil
+      ENV['RACK_ENV'] = 'staging'
+
+      file = Tempfile.new('rack_env_schedule_test')
+
+      rack_env_schedule.save_yaml(file.path)
+
+      loaded = Sidecloq::Schedule.from_yaml(file.path)
+
+      assert_equal('rack_env_test_job', loaded.job_specs.keys.first)
 
       ::Rails.env = restore_env
       file.delete

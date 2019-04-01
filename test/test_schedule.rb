@@ -12,10 +12,10 @@ class TestSchedule < Sidecloq::Test
         }
       }
     end
-    let(:nested_schedule_hash) do
+    let(:rails_env_schedule_hash) do
       {
         'development' => {
-          'test_job' => {
+          'rails_env_test_job' => {
             'class' => 'JobClass',
             'cron' => '0 7 * * *',
             'queue' => 'default',
@@ -25,6 +25,7 @@ class TestSchedule < Sidecloq::Test
       }
     end
     let(:schedule) { Sidecloq::Schedule.from_hash(schedule_hash) }
+    let(:rails_env_schedule) { Sidecloq::Schedule.from_hash(rails_env_schedule_hash) }
     before { Sidekiq.redis(&:flushdb) }
 
     it 'can save and load from a yml file' do
@@ -43,18 +44,16 @@ class TestSchedule < Sidecloq::Test
       file.delete
     end
 
-    it 'can load by env from a nested yml file' do
+    it 'can load by Rails.env from a nested yml file' do
       require 'tempfile'
 
       file = Tempfile.new('nested_schedule_test')
 
-      schedule.save_yaml(file.path)
+      rails_env_schedule.save_yaml(file.path)
 
       loaded = Sidecloq::Schedule.from_yaml(file.path)
 
-      assert_equal('test_job', loaded.job_specs.keys.first)
-      assert_equal('0 7 * * *', loaded.job_specs.values.first['cron'])
-      assert_equal({'batch' => 100}, loaded.job_specs.values.first['args'])
+      assert_equal('rails_env_test_job', loaded.job_specs.keys.first)
 
       file.delete
     end

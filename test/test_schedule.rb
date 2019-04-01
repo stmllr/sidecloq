@@ -44,7 +44,6 @@ class TestSchedule < Sidecloq::Test
     end
 
     it 'can load by env from a nested yml file' do
-      define_rails!
       require 'tempfile'
 
       file = Tempfile.new('nested_schedule_test')

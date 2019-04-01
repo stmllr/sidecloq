@@ -42,6 +42,8 @@ class TestSchedule < Sidecloq::Test
     end
 
     it 'can load Rails.env based nested yml file' do
+      define_rails!
+
       require 'tempfile'
 
       restore_env = ::Rails.env

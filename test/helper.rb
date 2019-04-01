@@ -61,6 +61,7 @@ class DummyActiveJob < ActiveJob::Base
 end
 
 def define_rails!
+  unless defined? Rails
     Object.const_set('Rails', Class.new do
 
       @env = 'development'
@@ -77,6 +78,7 @@ def define_rails!
         @env = env
       end
     end)
+  end
 end
 
 # also courtesy of sidekiq:

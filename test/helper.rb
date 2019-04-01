@@ -69,16 +69,11 @@ def define_rails!
       def self.env
         'development'
       end
-    end)
-end
 
-def set_rails_env(env = nil)
-  define_rails! unless defined? Rails
-  class Rails
-    def self.env
-      env
-    end
-  end
+      def self.env=(env = nil)
+        env
+      end
+    end)
 end
 
 # also courtesy of sidekiq:

@@ -14,7 +14,7 @@ class TestSchedule < Sidecloq::Test
     end
     let(:rails_env_schedule_hash) do
       {
-        'development' => {
+        'test' => {
           'rails_env_test_job' => {
             'class' => 'JobClass'
           }
@@ -43,8 +43,9 @@ class TestSchedule < Sidecloq::Test
 
     it 'can load Rails.env based nested yml file' do
       require 'tempfile'
+
       restore_env = Rails.env
-      set_rails_env("test")
+      Rails.env = 'test'
 
       file = Tempfile.new('rail_senv_schedule_test')
 
@@ -54,7 +55,7 @@ class TestSchedule < Sidecloq::Test
 
       assert_equal('rails_env_test_job', loaded.job_specs.keys.first)
 
-      set_rails_env(restore_env)
+      Rails.env = restore_env
       file.delete
     end
 

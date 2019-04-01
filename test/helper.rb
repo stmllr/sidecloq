@@ -61,7 +61,6 @@ class DummyActiveJob < ActiveJob::Base
 end
 
 def define_rails!
-  unless defined?(Rails)
     Object.const_set('Rails', Class.new do
       def self.root
         File.expand_path('../', __FILE__)
@@ -71,6 +70,14 @@ def define_rails!
         'development'
       end
     end)
+end
+
+def set_rails_env(env = nil)
+  define_rails! unless defined? Rails
+  class Rails
+    def self.env
+      env
+    end
   end
 end
 

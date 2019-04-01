@@ -46,7 +46,9 @@ class TestSchedule < Sidecloq::Test
     it 'can load by env from a nested yml file' do
       require 'tempfile'
 
-      file = Tempfile.new('nested_schedule_hash')
+      file = Tempfile.new('nested_schedule_test')
+
+      schedule.save_yaml(file.path)
 
       loaded = Sidecloq::Schedule.from_yaml(file.path)
 

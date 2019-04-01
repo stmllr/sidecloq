@@ -44,8 +44,8 @@ class TestSchedule < Sidecloq::Test
     it 'can load Rails.env based nested yml file' do
       require 'tempfile'
 
-      restore_env = Rails.env
-      Rails.env = 'test'
+      restore_env = ::Rails.env
+      ::Rails.env = 'test'
 
       file = Tempfile.new('rail_senv_schedule_test')
 
@@ -55,7 +55,7 @@ class TestSchedule < Sidecloq::Test
 
       assert_equal('rails_env_test_job', loaded.job_specs.keys.first)
 
-      Rails.env = restore_env
+      ::Rails.env = restore_env
       file.delete
     end
 
